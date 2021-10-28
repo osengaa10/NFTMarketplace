@@ -12,6 +12,7 @@ contract NFTMarket is ReentrancyGuard {
   using Counters for Counters.Counter;
   Counters.Counter private _itemIds;
   Counters.Counter private _itemsSold;
+   Counters.Counter private _mintedItemIds;
 
   address payable owner;
   // commission that contract owner received (0.025 MATIC)
@@ -30,9 +31,7 @@ contract NFTMarket is ReentrancyGuard {
     uint256 price;
     bool sold;
   }
-
   mapping(uint256 => MarketItem) private idToMarketItem;
-
   event MarketItemCreated (
     uint indexed itemId,
     address indexed nftContract,
@@ -43,9 +42,45 @@ contract NFTMarket is ReentrancyGuard {
     bool sold
   );
 
+  // Personal NFT
+  struct PersonalItem {
+    uint itemId;
+    address nftContract;
+    uint256 tokenId;
+    address payable owner;
+  }
+
+  mapping(uint256 => PersonalItem) private idToPersonalItem;
+
+  event PersonalItemCreated (
+    uint indexed itemId,
+    address indexed nftContract,
+    uint256 indexed tokenId,
+    address owner
+  );
+
   /* Returns the listing price of the contract */
   function getListingPrice() public view returns (uint256) {
     return listingPrice;
+  }
+
+  function createPersonalItem(address nftContract, uint256 tokenId) public payable nonReentrant {
+    // require(price > 0, "Price must be at least 1 wei");
+    // require(msg.value == listingPrice, "Price must be equal to listing price");
+
+    _mintedItemIds.increment();
+    uint256 _mintedItemId = _mintedItemIds.current();
+
+    idToPersonalItem[_mintedItemId] =  PersonalItem(
+      _mintedItemId,
+      nftContract,
+      tokenId,
+      payable(msg.sender)
+    );
+    // Transfers ownership from msg.sender to this contract address. Add more functionality to allow
+    // users to cancel listing
+    // IERC721(nftContract).transferFrom(msg.sender, address(this), tokenId);
+    // emit PersonalItemCreated(itemId,nftContract,tokenId,msg.sender);
   }
 
   /* Places an item for sale on the marketplace */
@@ -122,9 +157,32 @@ contract NFTMarket is ReentrancyGuard {
 
     MarketItem[] memory items = new MarketItem[](itemCount);
     for (uint i = 0; i < totalItemCount; i++) {
-      if (idToMarketItem[i + 1].owner == msg.sender) {
+      if (idToMarketItem[i + 1].owner == msg.sender || idToPersonalItem[i + 1].owner == msg.sender) {
         uint currentId = i + 1;
         MarketItem storage currentItem = idToMarketItem[currentId];
+        items[currentIndex] = currentItem;
+        currentIndex += 1;
+      }
+    }
+    return items;
+  }
+
+  function fetchMyPersonalNFTs() public view returns (PersonalItem[] memory) {
+    uint totalItemCount = _mintedItemIds.current();
+    uint itemCount = 0;
+    uint currentIndex = 0;
+
+    for (uint i = 0; i < totalItemCount; i++) {
+      if (idToPersonalItem[i + 1].owner == msg.sender) {
+        itemCount += 1;
+      }
+    }
+
+    PersonalItem[] memory items = new PersonalItem[](itemCount);
+    for (uint i = 0; i < totalItemCount; i++) {
+      if (idToMarketItem[i + 1].owner == msg.sender || idToPersonalItem[i + 1].owner == msg.sender) {
+        uint currentId = i + 1;
+        PersonalItem storage currentItem = idToPersonalItem[currentId];
         items[currentIndex] = currentItem;
         currentIndex += 1;
       }

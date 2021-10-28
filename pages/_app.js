@@ -10,12 +10,17 @@ function MyApp({ Component, pageProps }) {
         <div className="flex mt-4">
           <Link href="/">
             <a className="mr-4 text-pink-500">
-              Home
+              Marketplace
             </a>
           </Link>
           <Link href="/create-item">
             <a className="mr-6 text-pink-500">
-              Mint Digital Asset
+              Mint & Sell NFT
+            </a>
+          </Link>
+          <Link href="/create-personal-item">
+            <a className="mr-6 text-pink-500">
+              Only Mint NFT
             </a>
           </Link>
           <Link href="/my-assets">
@@ -25,7 +30,7 @@ function MyApp({ Component, pageProps }) {
           </Link>
           <Link href="/creator-dashboard">
             <a className="mr-6 text-pink-500">
-              Creator Dashboard
+              My Listings
             </a>
           </Link>
         </div>
