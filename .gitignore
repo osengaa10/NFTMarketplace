@@ -41,3 +41,5 @@ cache
 artifacts
 
 deployApp.sh
+
+_static
