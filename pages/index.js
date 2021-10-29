@@ -48,7 +48,10 @@ export default function Home() {
     /* needs the user to sign the transaction, so will use Web3Provider and sign it */
     const web3Modal = new Web3Modal()
     const connection = await web3Modal.connect()
-    const provider = new ethers.providers.Web3Provider(connection)
+    const provider = new ethers.providers.Web3Provider("https://rpc-mumbai.maticvigil.com/")
+    // const provider = new ethers.providers.Web3Provider("https://polygon-mumbai.infura.io/v3/3851c6c409d144a4a10cc0648c41be49")
+    // const provider = new ethers.providers.Web3Provider(connection)
+
     const signer = provider.getSigner()
     const contract = new ethers.Contract(nftmarketaddress, Market.abi, signer)
 
@@ -76,7 +79,7 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="p-4 bg-black">
-                  <p className="text-2xl mb-4 font-bold text-white">{nft.price} ETH</p>
+                  <p className="text-2xl mb-4 font-bold text-white">{nft.price} MATIC</p>
                   <button className="w-full bg-pink-500 text-white font-bold py-2 px-12 rounded" onClick={() => buyNft(nft)}>Buy</button>
                 </div>
               </div>
