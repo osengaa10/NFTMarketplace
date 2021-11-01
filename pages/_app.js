@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react'
 import '../styles/globals.css'
 import Link from 'next/link'
-import { checkInjectedProviders } from 'web3modal'
 
 function MyApp({ Component, pageProps }) {
   const [chain, setChain] = useState('')

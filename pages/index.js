@@ -17,7 +17,7 @@ export default function Home() {
   }, [])
   async function loadNFTs() {
     /* create a generic provider and query for unsold market items */
-    const provider = new ethers.providers.JsonRpcProvider()
+    const provider = new ethers.providers.JsonRpcProvider("https://polygon-rpc.com")
     const tokenContract = new ethers.Contract(nftaddress, NFT.abi, provider)
     const marketContract = new ethers.Contract(nftmarketaddress, Market.abi, provider)
     const data = await marketContract.fetchMarketItems()
@@ -48,9 +48,9 @@ export default function Home() {
     /* needs the user to sign the transaction, so will use Web3Provider and sign it */
     const web3Modal = new Web3Modal()
     const connection = await web3Modal.connect()
-    const provider = new ethers.providers.Web3Provider("https://rpc-mumbai.maticvigil.com/")
+    // const provider = new ethers.providers.Web3Provider("https://polygon-rpc.com")
     // const provider = new ethers.providers.Web3Provider("https://polygon-mumbai.infura.io/v3/3851c6c409d144a4a10cc0648c41be49")
-    // const provider = new ethers.providers.Web3Provider(connection)
+    const provider = new ethers.providers.Web3Provider(connection)
 
     const signer = provider.getSigner()
     const contract = new ethers.Contract(nftmarketaddress, Market.abi, signer)

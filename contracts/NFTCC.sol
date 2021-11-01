@@ -18,24 +18,19 @@ contract NFTCC is ERC721URIStorage {
         // NFTMarketplace.sol will be allowed to transfer ownership of NTFs.
         contractAddress = marketplaceAddress;
     }
- // function createToken(string memory tokenURI) public returns (uint) {
-    //     _tokenIds.increment();
-    //     uint256 newItemId = _tokenIds.current();
 
-    //     _mint(msg.sender, newItemId);
-    //     _setTokenURI(newItemId, tokenURI);
-    //     setApprovalForAll(contractAddress, true);
-    //     return newItemId;
+    //  constructor(string memory _name, string memory _symbol ) ERC721(_name, _symbol) {
+
     // }
-   
 
     function createMintedToken(string memory tokenURI) public returns (uint) {
+        
         _mintedTokenIds.increment();
         uint256 newItemId = _mintedTokenIds.current();
 
         _mint(msg.sender, newItemId);
         _setTokenURI(newItemId, tokenURI);
-        setApprovalForAll(contractAddress, true);
+        // setApprovalForAll(contractAddress, true);
         return newItemId;
     }
 }

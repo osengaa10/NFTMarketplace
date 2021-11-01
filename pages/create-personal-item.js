@@ -1,5 +1,5 @@
 /* pages/create-item.js */
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ethers } from 'ethers'
 import { create as ipfsHttpClient } from 'ipfs-http-client'
 import { useRouter } from 'next/router'
@@ -20,6 +20,7 @@ import NFTCC from '../artifacts/contracts/NFTCC.sol/NFTCC.json'
 export default function CreateItem() {
   const [fileUrl, setFileUrl] = useState(null)
   const [formInput, updateFormInput] = useState({ name: '', description: '' })
+  const [awaitingConfirmation, setAwaitingConfirmation] = useState(0)
   const router = useRouter()
 
   async function onChange(e) {
@@ -62,8 +63,8 @@ export default function CreateItem() {
 
     /* next, create the item */
     let contract = new ethers.Contract(nftccaddress, NFTCC.abi, signer)
-    console.log("contract")
     let transaction = await contract.createMintedToken(url)
+    setAwaitingConfirmation(1)
     let tx = await transaction.wait()
     let event = tx.events[0]
     let value = event.args[2]
@@ -73,6 +74,7 @@ export default function CreateItem() {
     contract = new ethers.Contract(nftmarketaddress, Market.abi, signer)
 
     transaction = await contract.createPersonalItem(nftccaddress, tokenId)
+    setAwaitingConfirmation(2)
     await transaction.wait()
     router.push('/my-assets')
   }
@@ -104,6 +106,8 @@ export default function CreateItem() {
         <button onClick={createMarket} className="font-bold mt-4 bg-pink-500 text-white rounded p-4 shadow-lg">
           Mint NFT
         </button>
+        <p className="text-2xl p-2 font-bold"> Transaction {awaitingConfirmation} of 2 processing... </p>
+
       </div>
     </div>
   )

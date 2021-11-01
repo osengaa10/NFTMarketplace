@@ -17,8 +17,9 @@ import Market from '../artifacts/contracts/NFTMarket.sol/NFTMarket.json'
 export default function CreateItem() {
   const [fileUrl, setFileUrl] = useState(null)
   const [formInput, updateFormInput] = useState({ price: '', name: '', description: '' })
-  const [forSale, setForSale] = useState()
+  const [awaitingConfirmation, setAwaitingConfirmation] = useState(0)
   const router = useRouter()
+
 
   async function onChange(e) {
     const file = e.target.files[0]
@@ -33,7 +34,7 @@ export default function CreateItem() {
       setFileUrl(url)
     } catch (error) {
       console.log('Error uploading file: ', error)
-    }  
+    }
   }
   async function createMarket() {
     const { name, description, price } = formInput
@@ -49,18 +50,19 @@ export default function CreateItem() {
       createSale(url)
     } catch (error) {
       console.log('Error uploading file: ', error)
-    }  
+    }
   }
 
   async function createSale(url) {
     const web3Modal = new Web3Modal()
     const connection = await web3Modal.connect()
-    const provider = new ethers.providers.Web3Provider(connection)    
+    const provider = new ethers.providers.Web3Provider(connection)
     const signer = provider.getSigner()
 
     /* next, create the item */
     let contract = new ethers.Contract(nftaddress, NFT.abi, signer)
     let transaction = await contract.createToken(url)
+    setAwaitingConfirmation(1)
     let tx = await transaction.wait()
     let event = tx.events[0]
     let value = event.args[2]
@@ -73,6 +75,7 @@ export default function CreateItem() {
     listingPrice = listingPrice.toString()
 
     transaction = await contract.createMarketItem(nftaddress, tokenId, price, { value: listingPrice })
+    setAwaitingConfirmation(2)
     await transaction.wait()
     router.push('/')
   }
@@ -80,7 +83,7 @@ export default function CreateItem() {
   return (
     <div className="flex justify-center">
       <div className="w-1/2 flex flex-col pb-12">
-        <input 
+        <input
           placeholder="Asset Name"
           className="mt-8 border rounded p-4"
           onChange={e => updateFormInput({ ...formInput, name: e.target.value })}
@@ -109,6 +112,7 @@ export default function CreateItem() {
         <button onClick={createMarket} className="font-bold mt-4 bg-pink-500 text-white rounded p-4 shadow-lg">
           Create and List NFT
         </button>
+        <p className="text-2xl p-2 font-bold"> Transaction {awaitingConfirmation} of 2 processing... </p>
       </div>
     </div>
   )
