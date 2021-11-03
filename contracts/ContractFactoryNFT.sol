@@ -15,12 +15,12 @@ contract Collection is ERC721URIStorage {
     constructor(string memory myName, string memory mySymbol) ERC721(myName, mySymbol) {
     }
 
-    function mint(address player, string memory tokenURI, uint totalSupply) public {
-        for(uint256 i = 1; i<= totalSupply; i++){
+    function mint(address player, string[] memory tokenURI, uint totalSupply) public {
+        for(uint256 i = 0; i < totalSupply; i++){
             _tokenIds.increment();
             uint256 newItemId = _tokenIds.current();
             _mint(player, newItemId);
-            _setTokenURI(newItemId, tokenURI);
+            _setTokenURI(newItemId, tokenURI[i]);
         }
     }
 }
@@ -35,7 +35,7 @@ contract ContractFactoryNFT {
     }
 
      // deploy a new purchase contract
-    function deploy(string memory name, string memory symbol, string memory tokenURI, uint256 totalSupply) public returns(address newContract){
+    function deploy(string memory name, string memory symbol, string[] memory tokenURI, uint256 totalSupply) public returns(address newContract){
          Collection c = new Collection(name,symbol);
          address cAddr = address(c);
          contracts.push(cAddr);

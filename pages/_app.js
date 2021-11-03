@@ -15,7 +15,7 @@ function MyApp({ Component, pageProps }) {
 
   const checkConnectedChain = async () => {
     setChain(await String(window.ethereum.chainId))
-    console.log(chain)
+    // console.log(chain)
   }
 
   const checkConnectedAccount = async () => {
@@ -27,13 +27,13 @@ function MyApp({ Component, pageProps }) {
       //   accounts: await ethereum.request({ method: "eth_requestAccounts" })
       // })
       let userAccounts = await ethereum.request({ method: "eth_requestAccounts" })
-      console.log("userAccounts:")
-      console.log(userAccounts)
+      // console.log("userAccounts:")
+      // console.log(userAccounts)
       setAccount(userAccounts[0])
     } catch (error) {
     }
-    console.log("account state:")
-    console.log(account)
+    // console.log("account state:")
+    // console.log(account)
   }
 
   const switchNetworkMumbai = async () => {
@@ -100,17 +100,17 @@ function MyApp({ Component, pageProps }) {
               Marketplace
             </a>
           </Link>
-          <Link href="./create-item">
+          <Link href="/create-item">
             <a className="mr-6 text-pink-500">
               Mint to Sell
             </a>
           </Link>
-          <Link href="./create-personal-item">
+          <Link href="/create-personal-item">
             <a className="mr-6 text-pink-500">
               Mint to Own
             </a>
           </Link>
-          <Link href="./my-assets">
+          <Link href="/my-assets">
             <a className="mr-6 text-pink-500">
               My NFTs
             </a>
