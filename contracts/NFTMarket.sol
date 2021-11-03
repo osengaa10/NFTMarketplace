@@ -177,7 +177,6 @@ contract NFTMarket is ReentrancyGuard {
         itemCount += 1;
       }
     }
-
     PersonalItem[] memory items = new PersonalItem[](itemCount);
     for (uint i = 0; i < totalItemCount; i++) {
       if (idToMarketItem[i + 1].owner == msg.sender || idToPersonalItem[i + 1].owner == msg.sender) {

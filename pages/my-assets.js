@@ -23,6 +23,7 @@ export default function MyAssets() {
     loadMintedNFTs()
   }, [])
   async function loadNFTs() {
+    console.log("======loadPurchasedNFTs=======")
     const web3Modal = new Web3Modal({
       network: "mainnet",
       cacheProvider: true,
@@ -50,6 +51,8 @@ export default function MyAssets() {
       }
       return item
     }))
+    console.log("==========fetchMy-PURCHASED-NFTs data==========")
+    console.log(data)
     setNfts(items)
     setLoadingState('loaded') 
   }

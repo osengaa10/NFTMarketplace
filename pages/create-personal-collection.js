@@ -10,16 +10,16 @@ const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
 import {
 //   nftaddress, 
   nftmarketaddress, 
-  nftccaddress
+  contractfactorynftaddress,
 } from '../config'
 
 // import NFT from '../artifacts/contracts/NFT.sol/NFT.json'
 import Market from '../artifacts/contracts/NFTMarket.sol/NFTMarket.json'
-import NFTCC from '../artifacts/contracts/NFTCC.sol/NFTCC.json'
+import ContractFactoryNFT from '../artifacts/contracts/ContractFactoryNFT.sol/ContractFactoryNFT.json'
 
 export default function CreateItem() {
   const [fileUrl, setFileUrl] = useState(null)
-  const [formInput, updateFormInput] = useState({ name: '', description: '' })
+  const [formInput, updateFormInput] = useState({ tokenName: '', description: '', tokenSymbol: '', amount: 0 })
   const [awaitingConfirmation, setAwaitingConfirmation] = useState(0)
   const router = useRouter()
 
@@ -39,31 +39,31 @@ export default function CreateItem() {
     }  
   }
   async function createMarket() {
-    const { name, description } = formInput
-    if (!name || !description || !fileUrl) return
+    const { tokenName, description, tokenSymbol, amount } = formInput
+    if (!tokenName || !description || !fileUrl || !tokenSymbol || !amount) return
     /* first, upload to IPFS */
     const data = JSON.stringify({
-      name, description, image: fileUrl
+        tokenName, description, tokenSymbol, amount, image: fileUrl
     })
+    console.log(data)
     try {
       const added = await client.add(data)
       const url = `https://ipfs.infura.io/ipfs/${added.path}`
       /* after file is uploaded to IPFS, pass the URL to save it on Polygon */
-      createSale(url)
+      createSale(url, tokenName, tokenSymbol, amount)
     } catch (error) {
       console.log('Error uploading file: ', error)
     }  
   }
 
-  async function createSale(url) {
+  async function createSale(url, tokenName, tokenSymbol, amount) {
     const web3Modal = new Web3Modal()
     const connection = await web3Modal.connect()
     const provider = new ethers.providers.Web3Provider(connection)    
     const signer = provider.getSigner()
-
     /* next, create the item */
-    let contract = new ethers.Contract(nftccaddress, NFTCC.abi, signer)
-    let transaction = await contract.createMintedToken(url)
+    let contract = new ethers.Contract(contractfactorynftaddress, ContractFactoryNFT.abi, signer)
+    let transaction = await contract.deploy(tokenName, tokenSymbol, url, amount)
     console.log("setting this as URI:")
     console.log(url)
     setAwaitingConfirmation(1)
@@ -73,25 +73,35 @@ export default function CreateItem() {
     console.log(tx)
     console.log("event")
     console.log(event)
-    let value = event.args[2]
-    let tokenId = value.toNumber()
-    console.log(tokenId)
-    /* then list the item for sale on the marketplace */
-    contract = new ethers.Contract(nftmarketaddress, Market.abi, signer)
+    // let value = event.args[2]
+    // let tokenId = value.toNumber()
+    // console.log(tokenId)
+    // /* then list the item for sale on the marketplace */
+    // contract = new ethers.Contract(nftmarketaddress, Market.abi, signer)
 
-    transaction = await contract.createPersonalItem(nftccaddress, tokenId)
-    setAwaitingConfirmation(2)
-    await transaction.wait()
+    // transaction = await contract.createPersonalItem(nftccaddress, tokenId)
+    // setAwaitingConfirmation(2)
+    // await transaction.wait()
     router.push('/my-assets')
   }
 
   return (
     <div className="flex justify-center">
       <div className="w-1/2 flex flex-col pb-12">
+      <input 
+          placeholder="Token Symbol"
+          className="mt-8 border rounded p-4"
+          onChange={e => updateFormInput({ ...formInput, tokenSymbol: e.target.value })}
+        />
+      <input 
+          placeholder="Total Supply"
+          className="mt-8 border rounded p-4"
+          onChange={e => updateFormInput({ ...formInput, amount: e.target.value })}
+        />
         <input 
           placeholder="NFT Name"
           className="mt-8 border rounded p-4"
-          onChange={e => updateFormInput({ ...formInput, name: e.target.value })}
+          onChange={e => updateFormInput({ ...formInput, tokenName: e.target.value })}
         />
         <textarea
           placeholder="NFT Description"

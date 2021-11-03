@@ -120,6 +120,11 @@ function MyApp({ Component, pageProps }) {
               Sales History
             </a>
           </Link>
+          <Link href="/create-personal-collection">
+            <a className="mr-6 text-pink-500">
+              Create Collection
+            </a>
+          </Link>
         </div>
       </nav>
       <Component {...pageProps} />

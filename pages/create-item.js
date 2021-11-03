@@ -64,7 +64,9 @@ export default function CreateItem() {
     let transaction = await contract.createToken(url)
     setAwaitingConfirmation(1)
     let tx = await transaction.wait()
+    console.log(tx)
     let event = tx.events[0]
+    console.log(event)
     let value = event.args[2]
     let tokenId = value.toNumber()
     const price = ethers.utils.parseUnits(formInput.price, 'ether')
