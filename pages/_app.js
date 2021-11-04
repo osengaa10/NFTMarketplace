@@ -105,7 +105,7 @@ function MyApp({ Component, pageProps }) {
               Mint to Sell
             </a>
           </Link>
-          <Link href="/create-personal-item">
+          <Link href="/create-personal-collection">
             <a className="mr-6 text-pink-500">
               Mint to Own
             </a>
@@ -120,11 +120,11 @@ function MyApp({ Component, pageProps }) {
               Sales History
             </a>
           </Link>
-          <Link href="/create-personal-collection">
+          {/* <Link href="/create-personal-collection">
             <a className="mr-6 text-pink-500">
               Create Collection
             </a>
-          </Link>
+          </Link> */}
         </div>
       </nav>
       <Component {...pageProps} />

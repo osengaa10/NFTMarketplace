@@ -27,10 +27,6 @@ async function main() {
   await contractFactoryNFT.deployed();
   console.log("contractFactoryNFT deployed to:", contractFactoryNFT.address)
 
-  // const Collection = await hre.ethers.getContractFactory("Collection");
-  // const collection = await Collection.deploy();
-  // await collection.deployed();
-  // console.log("collection deployed to:", collection.address)
 
 }
 

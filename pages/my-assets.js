@@ -5,22 +5,25 @@ import axios from 'axios'
 import Web3Modal from "web3modal"
 
 import {
-  nftmarketaddress, nftaddress, nftccaddress
+  nftmarketaddress, nftaddress, nftccaddress, contractfactorynftaddress
 } from '../config'
 
 import Market from '../artifacts/contracts/NFTMarket.sol/NFTMarket.json'
 import NFT from '../artifacts/contracts/NFT.sol/NFT.json'
 import NFTCC from '../artifacts/contracts/NFTCC.sol/NFTCC.json'
+import ContractFactoryNFT from '../artifacts/contracts/ContractFactoryNFT.sol/ContractFactoryNFT.json'
 
 
 export default function MyAssets() {
   const [nfts, setNfts] = useState([])
   const [mintedNfts, setMintedNfts] = useState([])
+  const [mintedCollections, setMintedCollections] = useState([])
   const [loadingState, setLoadingState] = useState('not-loaded')
 
   useEffect(() => {
     loadNFTs()
     loadMintedNFTs()
+    loadCollections()
   }, [])
   async function loadNFTs() {
     console.log("======loadPurchasedNFTs=======")
@@ -96,7 +99,57 @@ export default function MyAssets() {
     setLoadingState('loaded') 
   }
 
-  if (loadingState === 'loaded' && (!mintedNfts.length && !nfts.length)) return (<h1 className="py-10 px-20 text-3xl">No assets owned</h1>)
+  async function loadCollections() {
+    console.log("====== loadCollections =======")
+    const web3Modal = new Web3Modal({
+      network: "mainnet",
+      cacheProvider: true,
+    })
+    const connection = await web3Modal.connect()
+    const provider = new ethers.providers.Web3Provider(connection)
+    const signer = provider.getSigner()
+    const accounts = await provider.listAccounts()
+    const userAccount = accounts[0]
+
+    const factoryContract = new ethers.Contract(contractfactorynftaddress, ContractFactoryNFT.abi, signer)
+    // const tokenContract = new ethers.Contract(nftaddress, NFT.abi, provider)
+
+    const nftData = await factoryContract.getCollections()
+    let collectionSets = []
+    const items = await Promise.all(nftData.map(async i => {
+      let collectionItems = []
+      // console.log("collection items:")
+      // console.log(i)
+      // console.log(i.tokenURIs)
+      const collectionURIs = i.tokenURIs
+      // console.log("collectionURIs")
+      // console.log(collectionURIs)
+      for (let n = 0; n < collectionURIs.length; n++ ) {
+        const meta = await axios.get(collectionURIs[n])
+        console.log("meta")
+        console.log(meta)
+        let collectionItem = {
+          image: meta.data.image,
+          description: meta.data.description,
+          tokenName: meta.data.tokenName,
+          tokenSymbol: meta.data.tokenSymbol
+        }
+        collectionItems.push(collectionItem)
+        // return collectionItem
+        
+      }
+      // console.log("collectionItems")
+      // console.log(collectionItems)
+      collectionSets.push(collectionItems)
+    }))
+    console.log("collectionSets")
+    console.log(collectionSets)
+    console.log("========== loadCollections ==========")
+    setMintedCollections(collectionSets)
+    setLoadingState('loaded') 
+  }
+
+  if (loadingState === 'loaded' && (!mintedNfts.length && !nfts.length && !mintedCollections.length)) return (<h1 className="py-10 px-20 text-3xl">No assets owned</h1>)
   return (
     <div>
       <p className="text-2xl p-2 font-bold"> Purchased NFTs:</p>
@@ -122,7 +175,7 @@ export default function MyAssets() {
           </div>
         </div>
       </div>
-      <p className="text-2xl p-2  font-bold border-b"> Minted Personal NFTs:</p>
+      {/* <p className="text-2xl p-2  font-bold border-b"> Minted Personal NFTs:</p>
       <div className="flex justify-center">
       <div className="p-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
@@ -141,7 +194,32 @@ export default function MyAssets() {
           }
         </div>
       </div>
-    </div>
+    </div> */}
+    <p className="text-2xl p-2 font-bold"> Minted NFT Collections:</p>
+      <div className="flex justify-center">
+        <div className="p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
+            {
+              mintedCollections.map((collection, i) => (
+                collection.map((nft, n) => (
+                  <div key={n} className="border shadow rounded-xl overflow-hidden">
+                    <img src={nft.image} className="rounded" />
+                      <div className="p-4">
+                      <p style={{ height: '64px' }} className="text-2xl font-semibold">{nft.tokenName}</p>
+                        {/* <div style={{ height: '70px', overflow: 'hidden' }}>
+                          <p className="text-gray-400">{nft.description}</p>
+                        </div> */}
+                      </div>
+                    <div className="p-4 bg-black">
+                      <p className="text-2xl mb-4 font-bold text-white">{nft.tokenSymbol}</p>
+                    </div>
+                  </div>
+              ))
+            ))
+          }
+          </div>
+        </div>
+      </div>
   </div>
   )
 }

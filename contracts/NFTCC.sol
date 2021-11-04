@@ -14,7 +14,7 @@ contract NFTCC is ERC721URIStorage {
     Counters.Counter private _mintedTokenIds;
     address contractAddress;
 
-    constructor(address marketplaceAddress) ERC721("Personal", "PER") {
+    constructor(address marketplaceAddress) ERC721("IntergalacticTrash", "IGT") {
         // NFTMarketplace.sol will be allowed to transfer ownership of NTFs.
         contractAddress = marketplaceAddress;
     }

@@ -27,6 +27,21 @@ contract Collection is ERC721URIStorage {
 
 
 contract ContractFactoryNFT {
+
+    struct Collections {
+        // address[] contractAddresses;
+        UserCollectionItem[] items;
+        uint256 collectionCount;
+    }
+    struct UserCollectionItem {
+        address contractAddress;
+        string name;
+        string symbol;
+        string[] tokenURIs;
+        uint256 tokenAmount;
+    }
+    mapping(address => Collections) private collectionTracker;
+
     address[] public contracts;
     address public lastContractAddress;       
 
@@ -36,13 +51,30 @@ contract ContractFactoryNFT {
 
      // deploy a new purchase contract
     function deploy(string memory name, string memory symbol, string[] memory tokenURI, uint256 totalSupply) public returns(address newContract){
-         Collection c = new Collection(name,symbol);
-         address cAddr = address(c);
-         contracts.push(cAddr);
-         lastContractAddress = cAddr;
-         c.mint(msg.sender, tokenURI, totalSupply);
-         return cAddr;
+        Collection c = new Collection(name,symbol);
+        address cAddr = address(c);
+        contracts.push(cAddr);   
+        lastContractAddress = cAddr;
+        c.mint(msg.sender, tokenURI, totalSupply);
+        // append to the list of contracts msg.sender has created
+        UserCollectionItem memory myItem = UserCollectionItem(cAddr, name, symbol, tokenURI, totalSupply);
+        collectionTracker[msg.sender].items.push(myItem);
+        collectionTracker[msg.sender].collectionCount += 1;
+        return cAddr;
     }  
+
+    function getCollections() public view returns(UserCollectionItem[] memory) {
+        UserCollectionItem[] memory userItems = new UserCollectionItem[](collectionTracker[msg.sender].collectionCount);
+        for (uint i = 0; i < collectionTracker[msg.sender].collectionCount; i++) {
+            UserCollectionItem storage currentItem = collectionTracker[msg.sender].items[i];    
+            userItems[i] = currentItem;
+        }
+        return userItems;
+    }
+
+    // test,tst,["myURI"],1
+    // test2,tst2,["myURI2","myURI22"],2
+    // test3,tst3,["myURI3"],1
 
     // function mint(Collection tokenAddress, string memory tokenURI) public {
     //   tokenAddress.mint(msg.sender, tokenURI);
