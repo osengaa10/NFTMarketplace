@@ -18,6 +18,7 @@ export default function MyAssets() {
   const [nfts, setNfts] = useState([])
   const [mintedNfts, setMintedNfts] = useState([])
   const [mintedCollections, setMintedCollections] = useState([])
+  const [collectionAddresses, setCollectionAddresses] = useState([])
   const [loadingState, setLoadingState] = useState('not-loaded')
 
   useEffect(() => {
@@ -116,8 +117,10 @@ export default function MyAssets() {
 
     const nftData = await factoryContract.getCollections()
     let collectionSets = []
+    let collectionAddrs = []
     const items = await Promise.all(nftData.map(async i => {
       let collectionItems = []
+      collectionAddrs.push(i[0])
       // console.log("collection items:")
       // console.log(i)
       // console.log(i.tokenURIs)
@@ -146,6 +149,9 @@ export default function MyAssets() {
     console.log(collectionSets)
     console.log("========== loadCollections ==========")
     setMintedCollections(collectionSets)
+    setCollectionAddresses(collectionAddrs)
+    console.log("collectionAddresses")
+    console.log(collectionAddresses)
     setLoadingState('loaded') 
   }
 
@@ -206,9 +212,9 @@ export default function MyAssets() {
                     <img src={nft.image} className="rounded" />
                       <div className="p-4">
                       <p style={{ height: '64px' }} className="text-2xl font-semibold">{nft.tokenName}</p>
-                        {/* <div style={{ height: '70px', overflow: 'hidden' }}>
+                        <div style={{ height: '70px', overflow: 'hidden' }}>
                           <p className="text-gray-400">{nft.description}</p>
-                        </div> */}
+                        </div>
                       </div>
                     <div className="p-4 bg-black">
                       <p className="text-2xl mb-4 font-bold text-white">{nft.tokenSymbol}</p>
