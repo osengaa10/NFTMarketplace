@@ -208,7 +208,9 @@ export default function MyAssets() {
             {
               mintedCollections.map((collection, i) => (
                 collection.map((nft, n) => (
-                  <div key={n} className="border shadow rounded-xl overflow-hidden">
+                  <div key={n} style={{alignSelf: 'end'}} className="border shadow rounded-xl overflow-hidden">
+                  {/* <div key={n} className="border shadow rounded-xl overflow-hidden"> */}
+
                     <img src={nft.image} className="rounded" />
                       <div className="p-4">
                       <p style={{ height: '64px' }} className="text-2xl font-semibold">{nft.tokenName}</p>
