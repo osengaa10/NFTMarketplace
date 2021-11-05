@@ -20,6 +20,8 @@ export default function MyAssets() {
   const [mintedCollections, setMintedCollections] = useState([])
   const [collectionAddresses, setCollectionAddresses] = useState([])
   const [loadingState, setLoadingState] = useState('not-loaded')
+  const [blockExplorerLink, setBlockExplorerLink] = useState([])
+  const [tokenNames, setTokenNames] = useState([])
 
   useEffect(() => {
     loadNFTs()
@@ -27,7 +29,7 @@ export default function MyAssets() {
     loadCollections()
   }, [])
   async function loadNFTs() {
-    console.log("======loadPurchasedNFTs=======")
+    // console.log("======loadPurchasedNFTs=======")
     const web3Modal = new Web3Modal({
       network: "mainnet",
       cacheProvider: true,
@@ -55,15 +57,15 @@ export default function MyAssets() {
       }
       return item
     }))
-    console.log("==========fetchMy-PURCHASED-NFTs data==========")
-    console.log(data)
+    // console.log("==========fetchMy-PURCHASED-NFTs data==========")
+    // console.log(data)
     setNfts(items)
     setLoadingState('loaded') 
   }
 
 
   async function loadMintedNFTs() {
-    console.log("======loadMintedNFTs=======")
+    // console.log("======loadMintedNFTs=======")
     const web3Modal = new Web3Modal({
       network: "mainnet",
       cacheProvider: true,
@@ -84,7 +86,7 @@ export default function MyAssets() {
       const tokenUri = await tokenContract.tokenURI(i.tokenId)
       const meta = await axios.get(tokenUri)
       // let price = ethers.utils.formatUnits(i.price.toString(), 'ether')
-      console.log(i)
+      // console.log(i)
       let item = {
         tokenId: i.tokenId.toNumber(),
         name: meta.data.name,
@@ -94,14 +96,14 @@ export default function MyAssets() {
       }
       return item
     }))
-    console.log("==========fetchMy-MINTED-NFTs data==========")
-    console.log(nftData)
+    // console.log("==========fetchMy-MINTED-NFTs data==========")
+    // console.log(nftData)
     setMintedNfts(items)
     setLoadingState('loaded') 
   }
 
   async function loadCollections() {
-    console.log("====== loadCollections =======")
+    // console.log("====== loadCollections =======")
     const web3Modal = new Web3Modal({
       network: "mainnet",
       cacheProvider: true,
@@ -121,16 +123,18 @@ export default function MyAssets() {
     const items = await Promise.all(nftData.map(async i => {
       let collectionItems = []
       collectionAddrs.push(i[0])
+      blockExplorerLink.push("https://polygonscan.com/token/"+String(i[0]))
       // console.log("collection items:")
       // console.log(i)
+      tokenNames.push(i.name)
       // console.log(i.tokenURIs)
       const collectionURIs = i.tokenURIs
       // console.log("collectionURIs")
       // console.log(collectionURIs)
       for (let n = 0; n < collectionURIs.length; n++ ) {
         const meta = await axios.get(collectionURIs[n])
-        console.log("meta")
-        console.log(meta)
+        // console.log("meta")
+        // console.log(meta)
         let collectionItem = {
           image: meta.data.image,
           description: meta.data.description,
@@ -145,14 +149,15 @@ export default function MyAssets() {
       // console.log(collectionItems)
       collectionSets.push(collectionItems)
     }))
-    console.log("collectionSets")
-    console.log(collectionSets)
-    console.log("========== loadCollections ==========")
+    // console.log("collectionSets")
+    // console.log(collectionSets)
+    // console.log("========== loadCollections ==========")
     setMintedCollections(collectionSets)
-    setCollectionAddresses(collectionAddrs)
-    console.log("collectionAddresses")
-    console.log(collectionAddresses)
     setLoadingState('loaded') 
+    setCollectionAddresses(collectionAddrs)
+    // console.log("collectionAddresses")
+    // console.log(collectionAddresses)
+    
   }
 
   if (loadingState === 'loaded' && (!mintedNfts.length && !nfts.length && !mintedCollections.length)) return (<h1 className="py-10 px-20 text-3xl">No assets owned</h1>)
@@ -181,53 +186,40 @@ export default function MyAssets() {
           </div>
         </div>
       </div>
-      {/* <p className="text-2xl p-2  font-bold border-b"> Minted Personal NFTs:</p>
-      <div className="flex justify-center">
+    <p className="text-2xl p-2 font-bold"> Minted NFT Collections:</p>
+    <div className="flex justify-center">
       <div className="p-4">
+      <div className="flex justify-center">
+            <p className="text-2xl font-semibold">Token addresses:</p>
+        </div>
+        {collectionAddresses.map((colAddr, i) => (
+          <div key={i} className="flex justify-center">
+            <p className="text-2xl font-semibold"><a href={blockExplorerLink[i]}>{tokenNames[i]}: {colAddr}</a> </p>
+          </div>
+         ))
+        }
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
           {
-            mintedNfts.map((nft, i) => (
-              <div key={i} className="border shadow rounded-xl overflow-hidden">
-                <img src={nft.image} className="rounded" />
-                <div className="p-4">
-                  <p style={{ height: '64px' }} className="text-2xl font-semibold">{nft.name}</p>
-                  <div style={{ height: '70px', overflow: 'hidden' }}>
-                    <p className="text-gray-400">{nft.description}</p>
+            mintedCollections.map((collection, i) => (
+              collection.map((nft, n) => (
+                <div key={n} style={{alignSelf: 'end'}} className="border shadow rounded-xl overflow-hidden">
+                  <img src={nft.image} className="rounded" />
+                    <div className="p-4">
+                    <p style={{ height: '64px' }} className="text-2xl font-semibold">{nft.tokenName}</p>
+                      <div style={{ height: '70px', overflow: 'hidden' }}>
+                        <p className="text-gray-400">{nft.description}</p>
+                      </div>
+                    </div>
+                  <div className="p-4 bg-black">
+                    <p className="text-2xl mb-4 font-bold text-white">{nft.tokenSymbol}</p>
                   </div>
                 </div>
-              </div>
             ))
-          }
+          ))
+        }
         </div>
       </div>
-    </div> */}
-    <p className="text-2xl p-2 font-bold"> Minted NFT Collections:</p>
-      <div className="flex justify-center">
-        <div className="p-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-4">
-            {
-              mintedCollections.map((collection, i) => (
-                collection.map((nft, n) => (
-                  <div key={n} style={{alignSelf: 'end'}} className="border shadow rounded-xl overflow-hidden">
-                  {/* <div key={n} className="border shadow rounded-xl overflow-hidden"> */}
-
-                    <img src={nft.image} className="rounded" />
-                      <div className="p-4">
-                      <p style={{ height: '64px' }} className="text-2xl font-semibold">{nft.tokenName}</p>
-                        <div style={{ height: '70px', overflow: 'hidden' }}>
-                          <p className="text-gray-400">{nft.description}</p>
-                        </div>
-                      </div>
-                    <div className="p-4 bg-black">
-                      <p className="text-2xl mb-4 font-bold text-white">{nft.tokenSymbol}</p>
-                    </div>
-                  </div>
-              ))
-            ))
-          }
-          </div>
-        </div>
-      </div>
+    </div>
   </div>
   )
 }

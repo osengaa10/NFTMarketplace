@@ -71,12 +71,5 @@ contract ContractFactoryNFT {
         }
         return userItems;
     }
-
-    // test,tst,["myURI"],1
-    // test2,tst2,["myURI2","myURI22"],2
-    // test3,tst3,["myURI3"],1
-
-    // function mint(Collection tokenAddress, string memory tokenURI) public {
-    //   tokenAddress.mint(msg.sender, tokenURI);
-    // }       
+  
 }
