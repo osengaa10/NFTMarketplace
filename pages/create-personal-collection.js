@@ -126,7 +126,7 @@ export default function CreateItem() {
     setAwaitingConfirmation(1)
     let tx = await transaction.wait()
     let txHash = tx.transactionHash
-    setBlockExplorerLink("https://polygonscan/tx/"+txHash)
+    setBlockExplorerLink("https://polygonscan.com/tx/"+txHash)
     console.log("txHash: ", txHash)
     console.log("blockExplorerLink: ", blockExplorerLink)
     setAwaitingConfirmation(2)
