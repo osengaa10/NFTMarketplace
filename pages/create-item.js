@@ -103,6 +103,7 @@ export default function CreateItem() {
         <input
           type="file"
           name="Asset"
+          accept="image/png, image/gif, image/jpeg"
           className="my-4"
           onChange={onChange}
         />

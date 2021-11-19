@@ -27,6 +27,9 @@ export default function CreatorDashboard() {
     const provider = new ethers.providers.Web3Provider(connection)
     const signer = provider.getSigner()
 
+    const network = await provider.getNetwork();
+    const chainId = network.chainId;
+    if (chainId === 137) {
     const marketContract = new ethers.Contract(nftmarketaddress, Market.abi, signer)
     const tokenContract = new ethers.Contract(nftaddress, NFT.abi, provider)
     const data = await marketContract.fetchItemsCreated()
@@ -50,6 +53,10 @@ export default function CreatorDashboard() {
     setSold(soldItems)
     setNfts(items)
     setLoadingState('loaded') 
+
+    } else {
+      console.log("wrong network")
+    }
   }
   if (loadingState === 'loaded' && !nfts.length) return (<h1 className="py-10 px-20 text-3xl">No assets created</h1>)
   return (

@@ -2,11 +2,15 @@
 import { useState, useEffect } from 'react'
 import '../styles/globals.css'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { ethers } from 'ethers'
+
 
 function MyApp({ Component, pageProps }) {
   const [chain, setChain] = useState('')
   const [account, setAccount] = useState('')
 
+  const router = useRouter()
 
   useEffect(() => {
     checkConnectedChain()
@@ -15,7 +19,7 @@ function MyApp({ Component, pageProps }) {
 
   const checkConnectedChain = async () => {
     setChain(await String(window.ethereum.chainId))
-    // console.log(chain)
+    console.log(chain)
   }
 
   const checkConnectedAccount = async () => {
@@ -36,7 +40,7 @@ function MyApp({ Component, pageProps }) {
     // console.log(account)
   }
 
-  const switchNetworkMumbai = async () => {
+  const switchNetworkMatic = async () => {
     try {
       await window.ethereum.request({
         method: "wallet_switchEthereumChain",
@@ -66,30 +70,19 @@ function MyApp({ Component, pageProps }) {
         }
       }
     }
+    router.reload('/')
   }
 
 
   return (
     <div>
-      <p className="text-4xl p-3 font-bold">Metaverse Marketplace</p>
+      <p className="text-4xl p-3 font-bold">Matic Marketplace</p>
       {chain === '0x89' && account!= ''?
-        // <button onClick={switchNetworkMumbai} className="font-bold mb-2 mr-2 float-right bg-pink-500 text-white rounded p-3 shadow-lg">
-        //    {account &&
-        //     `${account.slice(0, 6)}...${account.slice(
-        //       account.length - 4,
-        //       account.length
-        //     )}`}
-        // </button>
         <p className="font-bold mb-2 mr-2 float-right text-black rounded p-3 shadow-lg">
-        connected: {account} 
-        {/* {account &&
-         `${account.slice(0, 6)}...${account.slice(
-           account.length - 4,
-           account.length
-         )}`} */}
-     </p>
+          connected: {account} 
+        </p>
         :
-        <button onClick={switchNetworkMumbai} className="font-bold mb-2 float-right bg-pink-500 text-white mr-3 rounded p-3 shadow-lg">
+        <button onClick={switchNetworkMatic} className="font-bold mb-2 float-right bg-pink-500 text-white mr-3 rounded p-3 shadow-lg">
             connect to Polygon
         </button>
       }    
