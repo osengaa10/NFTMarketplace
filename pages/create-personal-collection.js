@@ -107,7 +107,7 @@ export default function CreateItem() {
     console.log("blockExplorerLink: ", blockExplorerLink)
     setAwaitingConfirmation(2)
     // let event = tx.events[0]
-    // router.push('/my-assets')
+    router.push('/my-assets')
   }
 
   const switchNetworkMatic = async () => {

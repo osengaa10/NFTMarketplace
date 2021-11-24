@@ -7,12 +7,11 @@ import { useRouter } from 'next/router'
 import Web3Modal from "web3modal"
 
 import {
-  nftmarketaddress, nftaddress, nftccaddress, contractfactorynftaddress
+  nftmarketaddress, nftaddress, contractfactorynftaddress
 } from '../config'
 
 import Market from '../artifacts/contracts/NFTMarket.sol/NFTMarket.json'
 import NFT from '../artifacts/contracts/NFT.sol/NFT.json'
-import NFTCC from '../artifacts/contracts/NFTCC.sol/NFTCC.json'
 import ContractFactoryNFT from '../artifacts/contracts/ContractFactoryNFT.sol/ContractFactoryNFT.json'
 
 

@@ -9,7 +9,6 @@ import {
 } from '../config'
 
 import Market from '../artifacts/contracts/NFTMarket.sol/NFTMarket.json'
-import NFTCC from '../artifacts/contracts/NFT.sol/NFT.json'
 
 export default function MyAssets() {
   const [nfts, setNfts] = useState([])
