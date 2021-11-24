@@ -13,7 +13,7 @@ contract NFT is ERC721URIStorage {
     Counters.Counter private _tokenIds;
     address contractAddress;
 
-    constructor(address marketplaceAddress) ERC721("Senators", "SEN8") {
+    constructor(address marketplaceAddress) ERC721("intergalactictrash", "IGT") {
         // NFTMarketplace.sol will be allowed to transfer ownership of NTFs.
         contractAddress = marketplaceAddress;
     }

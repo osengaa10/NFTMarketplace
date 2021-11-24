@@ -19,8 +19,6 @@ describe("NFTMarket", function() {
     // reference NFT.sol address
     const nftContractAddress = nft.address
 
-    let listingPrice = await market.getListingPrice()
-    listingPrice = listingPrice.toString()
 
     const auctionPrice = ethers.utils.parseUnits('1', 'ether')
 
@@ -30,8 +28,8 @@ describe("NFTMarket", function() {
     await nft.createToken("https://www.mytokenlocation2.com")
 
     /* put both tokens for sale */
-    await market.createMarketItem(nftContractAddress, 1, auctionPrice, { value: listingPrice })
-    await market.createMarketItem(nftContractAddress, 2, auctionPrice, { value: listingPrice })
+    await market.createMarketItem(nftContractAddress, 1, auctionPrice)
+    await market.createMarketItem(nftContractAddress, 2, auctionPrice)
     // ethers.js baked in method to get as many theoretical addresses as needed.
     const [_, buyerAddress] = await ethers.getSigners()
 

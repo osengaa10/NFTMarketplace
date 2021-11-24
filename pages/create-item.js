@@ -32,6 +32,7 @@ export default function CreateItem() {
       )
       const url = `https://ipfs.infura.io/ipfs/${added.path}`
       setFileUrl(url)
+      console.log(fileUrl)
     } catch (error) {
       console.log('Error uploading file: ', error)
     }
@@ -73,10 +74,8 @@ export default function CreateItem() {
 
     /* then list the item for sale on the marketplace */
     contract = new ethers.Contract(nftmarketaddress, Market.abi, signer)
-    let listingPrice = await contract.getListingPrice()
-    listingPrice = listingPrice.toString()
 
-    transaction = await contract.createMarketItem(nftaddress, tokenId, price, { value: listingPrice })
+    transaction = await contract.createMarketItem(nftaddress, tokenId, price)
     setAwaitingConfirmation(2)
     await transaction.wait()
     router.push('/')
