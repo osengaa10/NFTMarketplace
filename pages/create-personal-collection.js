@@ -4,7 +4,6 @@ import { ethers } from 'ethers'
 import { create as ipfsHttpClient } from 'ipfs-http-client'
 import { useRouter } from 'next/router'
 import Web3Modal from 'web3modal'
-import switchNetworkMatic from './my-assets'
 
 const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
 
@@ -89,6 +88,12 @@ export default function CreateItem() {
     const connection = await web3Modal.connect()
     const provider = new ethers.providers.Web3Provider(connection)    
     const signer = provider.getSigner()
+
+    const network = await provider.getNetwork();
+    const chainId = network.chainId;
+    if (chainId != 137) {
+      switchNetworkMatic()
+    }
     /* next, create the item */
     let contract = new ethers.Contract(contractfactorynftaddress, ContractFactoryNFT.abi, signer)
     let transaction = await contract.deploy(tokenName, tokenSymbol, urls, tokenAmount)
@@ -103,6 +108,40 @@ export default function CreateItem() {
     setAwaitingConfirmation(2)
     // let event = tx.events[0]
     // router.push('/my-assets')
+  }
+
+  const switchNetworkMatic = async () => {
+    try {
+      await window.ethereum.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: "0x89" }],
+      });
+    } catch (error) {
+      if (error.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId: "0x89",
+                chainName: "Polygon",
+                rpcUrls: ["https://polygon-rpc.com"],
+                nativeCurrency: {
+                  name: "Matic",
+                  symbol: "Matic",
+                  decimals: 18,
+                },
+                blockExplorerUrls: ["https://polygonscan.com"],
+              },
+            ],
+          });
+        } catch (addError) {
+          alert(addError);
+        }
+      }
+    }
+    // router.reload('/my-assets')
+    // router.reload(window.location.pathname)
   }
 
   return (
@@ -145,7 +184,7 @@ export default function CreateItem() {
         </button>
         { awaitingConfirmation < 2 ? 
           <div>
-            <p className="text-2xl p-2 font-bold">Don't leave this page. You will be redirected after minting is complete.</p>
+            <p className="text-2xl p-2 font-bold">Dont leave this page. You will be redirected after minting is complete.</p>
             <p className="text-2xl p-2 font-bold">Transaction {awaitingConfirmation} of 1 processing... </p>
           </div>
           :

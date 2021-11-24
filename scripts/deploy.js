@@ -17,10 +17,10 @@ async function main() {
   await nft.deployed();
   console.log("nft deployed to:", nft.address);
 
-  const NFTCC = await hre.ethers.getContractFactory("NFTCC");
-  const nftcc = await NFTCC.deploy(nftMarket.address);
-  await nftcc.deployed();
-  console.log("nftcc deployed to:", nftcc.address);
+  // const NFTCC = await hre.ethers.getContractFactory("NFTCC");
+  // const nftcc = await NFTCC.deploy(nftMarket.address);
+  // await nftcc.deployed();
+  // console.log("nftcc deployed to:", nftcc.address);
 
   const ContractFactoryNFT = await hre.ethers.getContractFactory("ContractFactoryNFT");
   const contractFactoryNFT = await ContractFactoryNFT.deploy();

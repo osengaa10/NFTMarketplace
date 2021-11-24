@@ -13,5 +13,5 @@
 // Polygon mainnet
 export const nftmarketaddress = "0xf9bCA1a8272593D4e148D80809d5d52b3c35Cea1"
 export const nftaddress = "0xbCaD73926326dc8E1B05aE56D9eDdD929eDE2daB"
-export const nftccaddress = "0xa765083f19E1b06eC96D36DaA29BE284f0dcb1b4"
+// export const nftccaddress = "0xa765083f19E1b06eC96D36DaA29BE284f0dcb1b4"
 export const contractfactorynftaddress = "0x9B2A6C294f4b98E9A4D620e179408407E4bAbF57"
